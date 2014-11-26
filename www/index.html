@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>raspberrytrack</title>
+	<style>
+		body {
+			font-size: 20px;
+		}
+		h1 {
+			font-size: 1.2em;
+		}
+	</style>
+</head>
+<body>
+	<h1>List of machines</h1>
+	<script type="text/x-handlebars-template">
+	<table id="table">
+		<thead>
+			<tr>
+				<th>online</th>
+				<th>ip</th>
+				<th>mac</th>
+				<th>hostname</th>
+				<th>lastseen</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{#each machines}}
+			<tr>
+				<td>{{#if online}}✓{{else}}𐄂{{/if}}</td>
+				<td>{{ip}}</td>
+				<td>{{mac}}</td>
+				<td>{{hostname}}</td>
+				<td>{{Date lastseen "toLocaleDateString"}} at {{Date lastseen "toLocaleTimeString"}}</td>
+			</tr>
+			{{/each}}
+		</tbody>
+	</table>
+	</script>
+
+	<script src="handlebars-v2.0.0.js"></script>
+	<script src="handlebars-autorender.js"></script>
+	<script src="O.o.tree.js"></script>
+	<script>
+
+		Handlebars.registerHelper("Date", function (date, fn) {
+			return new Date(date)[fn]();
+		});
+
+		var context = {};
+		var autoRenderer = new AutoRenderer();
+
+		function update() {
+			console.log("something changed");
+			autoRenderer.update(context);
+		}
+		observeTree(context, update);
+
+		context.machines = {
+			"b8:27:eb:9e:d5:9c": {
+				ip: "lol",
+				mac: "lol",
+				hostname: "lol",
+				lastseen: new Date()
+			}
+		};
+
+
+		function get(uri, cb, error) {
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function() {
+				if (this.readyState == 4) {
+					var data;
+					try {
+						data = JSON.parse(this.responseText);
+					}
+					catch (e) {
+						data = this.responseText
+					}
+					cb(data);
+				}
+			};
+			xhr.onerror = error;
+			xhr.open("GET", uri);
+			xhr.send();
+		}
+
+
+		function req() {
+			get("json", function (data) {
+				if (JSON.stringify(context.machines) != JSON.stringify(data.machines)) {
+					context.machines = data.machines;
+				}
+				setTimeout(req, 500);
+			}, function (e) {
+				// console.error(e);
+				setTimeout(req, 2000);
+			});
+		}
+		req();
+
+
+	</script>
+</body>
+</html>

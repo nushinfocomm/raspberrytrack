@@ -1,0 +1,1 @@
+This modified copy of raspbian is only for use in a class-based environment, due to the device-tracking daemon installed in /usr/local/bin/raspberrytracker and respective System V services. Not for personal use. 

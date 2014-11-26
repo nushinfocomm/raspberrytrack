@@ -1,0 +1,6 @@
+#!/bin/sh
+if [ -z $1 ]; then
+	echo "IP not given"
+	exit 1
+fi;
+ssh -i ./key_rsa pi@"$@"

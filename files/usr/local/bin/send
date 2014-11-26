@@ -1,0 +1,41 @@
+#!/usr/local/bin/node
+// (ambc)
+var os = require("os");
+var http = require("http");
+var macaddr;
+require("/usr/local/lib/node_modules/getmac").getMac(function(err,macAddress){
+//require("getmac").getMac(function(err,macAddress){
+	if (err)  throw err;
+	macaddr = macAddress;
+	ready();
+});
+var ifaces = os.networkInterfaces();
+var ipaddr = os.networkInterfaces()["eth0"][0].address;
+var hostname = os.hostname();
+
+var eventname = process.argv[2];
+
+function ready() {
+	var req = http.request({
+		hostname: "raspberrytrack.eurica.eu.org",
+		port: 80,
+		path: "/event/" + eventname,
+		method: "POST",
+		headers: {
+			"content-type": "application/json"
+		}
+	}, function (res) {
+		console.log("POST /online done at " + new Date().getTime());
+		// console.log(res);
+		res.on('data', function (chunk) {
+			console.log(chunk.toString());
+		});
+	});
+	var request = {
+		ip: ipaddr,
+		mac: macaddr,
+		hostname: hostname
+	};
+	req.write(JSON.stringify(request));
+	req.end();
+}

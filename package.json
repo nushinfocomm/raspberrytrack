@@ -1,0 +1,16 @@
+{
+  "name": "raspberrytrack",
+  "description": "Track Raspberry Pis",
+  "version": "0.0.1",
+  "license": "WTFPL",
+  "main": "./server.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.9.3",
+    "express": "^4.10.4",
+    "express-handlebars": "^1.1.0",
+    "jfs": "^0.2.3"
+  }
+}
